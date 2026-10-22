@@ -10,7 +10,7 @@ import {
   type IntakeSubmission,
 } from "@/lib/shop";
 
-const steps = ["Vehicle", "Problem", "Contact", "Review"] as const;
+const steps = ["Vehicle", "Problem", "You", "Review"] as const;
 
 const empty: IntakeSubmission = {
   vin: "",
@@ -26,6 +26,8 @@ const empty: IntakeSubmission = {
   phone: "",
   email: "",
   contactPref: "Text",
+  location: "",
+  availability: "",
 };
 
 const VIN_RE = /^[A-HJ-NPR-Z0-9]{17}$/; // VINs never use I, O or Q
@@ -52,6 +54,7 @@ function validate(step: number, d: IntakeSubmission): Errors {
   if (step === 2) {
     if (!d.name.trim()) e.name = "Enter your name.";
     if (d.phone.replace(/\D/g, "").length < 10) e.phone = "Enter a 10-digit phone number.";
+    if (d.location.trim().length < 3) e.location = "Let us know where the vehicle is.";
     if (d.contactPref === "Email" && !/^\S+@\S+\.\S+$/.test(d.email)) e.email = "Enter an email to be contacted by email.";
   }
   return e;
@@ -131,7 +134,7 @@ export default function IntakeForm() {
         <div className="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-full bg-ok/15 text-2xl text-ok">✓</div>
         <h2 className="text-xl font-semibold">Got it, {data.name.split(" ")[0]}.</h2>
         <p className="mt-2 text-muted">
-          A mechanic will review your {data.year} {data.make} and reach out by {data.contactPref.toLowerCase()}.{" "}
+          I'll look over your {data.year} {data.make} and reach out by {data.contactPref.toLowerCase()}.{" "}
           {shop.responseTime}.
         </p>
       </div>
@@ -272,6 +275,27 @@ export default function IntakeForm() {
               onChange={(e) => set("email", e.target.value)}
             />
           </Field>
+          <Field
+            label="Where's the vehicle?"
+            hint="Address, cross streets, or a meeting spot like a parking lot."
+            error={errors.location}
+          >
+            <input
+              className={inputCls}
+              autoComplete="street-address"
+              value={data.location}
+              placeholder="123 Main St, or Walmart lot on 5th"
+              onChange={(e) => set("location", e.target.value)}
+            />
+          </Field>
+          <Field label="When works for you?" hint="Optional.">
+            <input
+              className={inputCls}
+              value={data.availability}
+              placeholder="Weekday evenings, Saturday morning"
+              onChange={(e) => set("availability", e.target.value)}
+            />
+          </Field>
           <Field label="Best way to reach you">
             <Chips options={contactOptions} selected={[data.contactPref]} onToggle={(v) => set("contactPref", v)} />
           </Field>
@@ -293,12 +317,14 @@ export default function IntakeForm() {
             <p className="text-muted">Drivable: {data.drivable}</p>
             <p className="mt-2 whitespace-pre-wrap">{data.description}</p>
           </Summary>
-          <Summary title="Contact" onEdit={() => setStep(2)}>
+          <Summary title="You" onEdit={() => setStep(2)}>
             <p>{data.name}</p>
             <p className="text-muted">
               {data.phone}
               {data.email && ` · ${data.email}`} · prefers {data.contactPref.toLowerCase()}
             </p>
+            <p className="mt-2">{data.location}</p>
+            {data.availability && <p className="text-muted">Available: {data.availability}</p>}
           </Summary>
           {status === "error" && (
             <p className="rounded-xl bg-bad/10 p-3 text-bad">
@@ -325,7 +351,7 @@ export default function IntakeForm() {
           disabled={status === "sending"}
           className="h-12 flex-1 rounded-xl bg-signal font-semibold text-signal-ink shadow-[0_8px_30px_-8px_var(--color-signal)] transition active:scale-[0.98] disabled:opacity-60"
         >
-          {step === 3 ? (status === "sending" ? "Sending…" : "Send to the mechanic") : "Continue"}
+          {step === 3 ? (status === "sending" ? "Sending…" : "Send request") : "Continue"}
         </button>
       </div>
     </div>

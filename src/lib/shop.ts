@@ -3,7 +3,7 @@
 
 export const shop = {
   name: "Your Shop Name", // PLACEHOLDER
-  tagline: "Tell us what your car is doing. A mechanic gets back to you.",
+  tagline: "Mobile mechanic. Tell me what your car is doing and where it is, and I'll come to you.",
   phone: "(555) 555-5555", // PLACEHOLDER
   responseTime: "Usually within a few hours during business hours", // PLACEHOLDER
   city: "Your City", // PLACEHOLDER
@@ -50,4 +50,6 @@ export type IntakeSubmission = {
   phone: string;
   email: string;
   contactPref: string;
+  location: string;
+  availability: string;
 };

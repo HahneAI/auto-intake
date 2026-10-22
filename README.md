@@ -8,10 +8,17 @@ npm install
 npm run dev
 ```
 
+## TJ's admin page
+`/admin`: sign in with `ADMIN_PASSWORD` (stays signed in 90 days). Lists requests newest first; each one has Call / Text / Directions buttons and a notes box.
+
 ## Configure
 - Business details and form options: `src/lib/shop.ts` (values marked PLACEHOLDER).
-- Submissions: `POST /api/intake`. Set `INTAKE_WEBHOOK_URL` (Make, Zapier, Slack webhook…) to forward each one; without it they are only logged to the server/Vercel function logs.
+- Storage: Upstash Redis via Vercel → Storage (injects `KV_REST_API_URL` / `KV_REST_API_TOKEN`). Without it, local dev saves to `.data/intakes.json`.
+- Optional: `INTAKE_WEBHOOK_URL` also forwards each request (for text/email alerts later).
 - VIN lookup uses the free NHTSA vPIC API from the browser (no key).
 
 ## Deploy
-Import the repo in Vercel (framework auto-detected), add `INTAKE_WEBHOOK_URL`, deploy.
+1. Import the repo in Vercel.
+2. Storage → add Upstash Redis, connect to the project.
+3. Add env var `ADMIN_PASSWORD`.
+4. Deploy.
