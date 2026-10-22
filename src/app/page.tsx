@@ -1,3 +1,4 @@
+import Link from "next/link";
 import IntakeForm from "@/components/IntakeForm";
 import { shop } from "@/lib/shop";
 
@@ -22,6 +23,9 @@ export default function Home() {
         <a className="text-signal underline-offset-4 hover:underline" href={`tel:${shop.phone.replace(/\D/g, "")}`}>
           {shop.phone}
         </a>
+        <Link href="/admin" className="mt-6 block text-muted/60 underline-offset-4 hover:text-white hover:underline">
+          Owner login
+        </Link>
       </footer>
     </main>
   );
